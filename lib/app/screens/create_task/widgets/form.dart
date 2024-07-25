@@ -20,6 +20,7 @@ class _CalendarFormState extends State<CalendarForm> {
   Widget build(BuildContext context) {
     CreateTaskController createTaskController =
         Get.find<CreateTaskController>();
+    FocusScopeNode currentFocus = FocusScope.of(context);
     return Column(
       children: [
         Padding(
@@ -45,11 +46,12 @@ class _CalendarFormState extends State<CalendarForm> {
         Padding(
           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: TextField(
+            onEditingComplete: () {
+              currentFocus.focusedChild!.unfocus();
+            },
             onChanged: (text) {
               createTaskController.desc = text;
             },
-            keyboardType: TextInputType.multiline,
-            maxLines: null,
             controller: descController,
             decoration: const InputDecoration(
               labelText: 'Task Description',
@@ -63,6 +65,7 @@ class _CalendarFormState extends State<CalendarForm> {
             color: Colors.white,
           ),
         ),
+        //Start Pop-up Menu
         SizedBox(
           height: 50,
           width: 200,
@@ -77,7 +80,7 @@ class _CalendarFormState extends State<CalendarForm> {
                     value: "basic",
                     child: Text(
                       "Basic",
-                      style: TextStyle(color: Colors.grey[600]),
+                      style: TextStyle(color: Colors.grey[850]),
                     ),
                   ),
                   PopupMenuItem<String>(
@@ -109,9 +112,10 @@ class _CalendarFormState extends State<CalendarForm> {
                 }
               });
             },
-            child: Text(selectedPriority.name.toString().toUpperCase()),
+            child: getPriorityText(selectedPriority),
           ),
         ),
+        //End Pop-up Menu
         SizedBox(
           height: 40,
           child: Container(
@@ -120,5 +124,30 @@ class _CalendarFormState extends State<CalendarForm> {
         ),
       ],
     );
+  }
+
+  Text getPriorityText(Priority selectedPriority) {
+    switch (selectedPriority) {
+      case Priority.basic:
+        return Text(
+          "Basic",
+          style: TextStyle(color: Colors.grey[850]),
+        );
+      case Priority.urgent:
+        return Text(
+          "Urgent",
+          style: TextStyle(color: Colors.red[400]),
+        );
+      case Priority.important:
+        return Text(
+          "Important",
+          style: TextStyle(color: Colors.orange[600]),
+        );
+      case Priority.urgentImportant:
+        return Text(
+          "Urgent & Important",
+          style: TextStyle(color: Colors.red[900]),
+        );
+    }
   }
 }

@@ -19,7 +19,6 @@ class _CreateTaskState extends State<CreateTask> {
   Widget build(BuildContext context) {
     CreateTaskController createTaskController = Get.find<CreateTaskController>();
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(224, 224, 224, 1),
       appBar: AppBar(
         backgroundColor: Colors.blueGrey[200],
         title: const Text("Create task"),
