@@ -15,21 +15,16 @@ class ShowTasksSelectedDate extends StatelessWidget {
   Widget build(BuildContext context) {
     CalendarController calendarController = Get.find<CalendarController>();
     return AlertDialog(
-      backgroundColor: calendarController.isDarkMode
-          ? Colors.grey[800]
-          : Colors.white,
+      backgroundColor:
+          calendarController.isDarkMode ? Colors.grey[800] : Colors.white,
       title: Text(
         "Tasks",
         style: TextStyle(
-          color: calendarController.isDarkMode
-              ? Colors.white
-              : Colors.black,
+          color: calendarController.isDarkMode ? Colors.white : Colors.black,
         ),
       ),
       content: Container(
-        color: calendarController.isDarkMode
-            ? Colors.grey[800]
-            : Colors.white,
+        color: calendarController.isDarkMode ? Colors.grey[800] : Colors.white,
         height: containerHeight(),
         width: 300,
         child: ListView.builder(
@@ -56,6 +51,7 @@ class ShowTasksSelectedDate extends StatelessWidget {
       ),
     );
   }
+
   double containerHeight() {
     switch (currentTasks.length) {
       case 1:

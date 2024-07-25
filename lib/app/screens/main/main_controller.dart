@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:todo_it/app/data/repository/task_repository.dart';
 import 'package:todo_it/app/Constants/constants.dart';
+import 'package:todo_it/app/screens/create_task/create_task.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../data/local/models/task_model.dart';
 
@@ -28,15 +30,108 @@ class MainController extends GetxController {
 
   void toggleDatepickerShow() {
     isDatepickerShow = !isDatepickerShow;
-    if(isDatepickerShow)
-      {
-        print("Date picker opened");
-        selectedDate = DateTime.now();
-        changeList();
-      }else{
+    if (isDatepickerShow) {
+      print("Date picker opened");
+      selectedDate = DateTime.now();
+      changeList();
+    } else {
       print("Date picker closed");
     }
     update();
+  }
+
+  String getRepeatFreqTitle(int repeat) {
+    switch (repeat) {
+      case 0:
+        return "Repeats every day";
+      case 1:
+        return "Repeats every week";
+      case 2:
+        return "Repeats every month";
+      case 3:
+        return "Repeats every year";
+      default:
+        return "No repeat";
+    }
+  }
+
+  Future<void> createRepeatTask(Task task, int selectedRepeat) async {
+    // 0 Day  1 Week  2 Month 3 Year
+    if (selectedRepeat == -1) return;
+
+
+    String repeatId = const Uuid().v4();
+
+    switch (selectedRepeat) {
+      case 0:
+        await createRepeatedDay(task, repeatId, selectedRepeat);
+        break;
+      case 1:
+        await createRepeatedWeek(task, repeatId, selectedRepeat);
+        break;
+      case 2:
+        await createRepeatedMonth(task, repeatId, selectedRepeat);
+        break;
+      case 3:
+        createRepeatedYear(task, repeatId, selectedRepeat);
+        break;
+    }
+
+    task.repeatFreq = selectedRepeat;
+    task.repeatId = repeatId;
+    await taskRepository.updateTask(task);
+    changeList();
+    print("Repeat task completed");
+  }
+
+  Future<void> createRepeatedYear(Task task, String repeatId, int selectedRepeat) async {
+    Task newTask = createTaskForRepeat(task, selectedRepeat);
+    newTask.startDate = DateTime(task.startDate!.year + 1,
+        task.startDate!.month, task.startDate!.day + 1);
+    newTask.repeatId = repeatId;
+    await taskRepository.createNewTask(newTask);
+  }
+
+  Task createTaskForRepeat(Task task, int selectedRepeat) {
+    Task newTask = new Task(
+      title: task.title,
+      description: task.description,
+      startDate: null,
+      priority: task.priority,
+      isCompleted: false,
+      repeatFreq: selectedRepeat,
+    );
+    return newTask;
+  }
+
+  Future<void> createRepeatedMonth(Task task, String repeatId, int selectedRepeat) async {
+    for (int i = 1; i <= 12; i++) {
+      Task newTask = createTaskForRepeat(task, selectedRepeat);
+      newTask.startDate = DateTime(task.startDate!.year,
+          task.startDate!.month + i, task.startDate!.day);
+      newTask.repeatId = repeatId;
+      await taskRepository.createNewTask(newTask);
+    }
+  }
+
+  Future<void> createRepeatedWeek(Task task, String repeatId, int selectedRepeat) async {
+    for (int i = 0; i < 4; i++) {
+      Task newTask = createTaskForRepeat(task, selectedRepeat);
+      newTask.startDate = task.startDate!.add(Duration(days: 7 + i));
+      newTask.repeatId = repeatId;
+      await taskRepository.createNewTask(newTask);
+    }
+  }
+
+  Future<void> createRepeatedDay(Task task, String repeatId, int selectedRepeat) async {
+
+    for (int i = 1; i <= 7; i++) {
+      Task newTask = createTaskForRepeat(task, selectedRepeat);
+      int add = i;
+      newTask.startDate = task.startDate!.add(Duration(days: i));
+      newTask.repeatId = repeatId;
+      await taskRepository.createNewTask(newTask);
+    }
   }
 
   @override
@@ -57,38 +152,34 @@ class MainController extends GetxController {
   Future<void> deleteTask(Task task) async {
     await taskRepository.deleteTask(task);
     print("Task deleted");
-    if(selectedDate != null)
-    {
+    if (selectedDate != null) {
       DateTime selectedDateTemp = selectedDate ?? DateTime.now();
       resetTasks();
       selectedDate = selectedDateTemp;
-    }else{
+    } else {
       resetTasks();
     }
     changeList();
   }
 
-  Future<void> toggleCompletedTask(Task task)
-  async {
+  Future<void> toggleCompletedTask(Task task) async {
     //print("Before toggle " + task.isCompleted.toString());
     task.isCompleted = !task.isCompleted!;
     final updatedTask = task.copyWith(task);
     //print("After toggle " + updatedTask.isCompleted.toString());
     await taskRepository.updateTask(updatedTask);
-    if(selectedDate != null)
-      {
-        DateTime selectedDateTemp = selectedDate ?? DateTime.now();
-        resetTasks();
-        selectedDate = selectedDateTemp;
-      }else{
+    if (selectedDate != null) {
+      DateTime selectedDateTemp = selectedDate ?? DateTime.now();
+      resetTasks();
+      selectedDate = selectedDateTemp;
+    } else {
       resetTasks();
     }
 
     changeList();
   }
 
-  void addTask(Task task)
-  {
+  void addTask(Task task) {
     taskRepository.createNewTask(task);
     print("Task added");
     resetTasks();

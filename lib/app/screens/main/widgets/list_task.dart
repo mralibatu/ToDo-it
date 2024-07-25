@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todo_it/app/screens/main/main_controller.dart';
+import 'package:todo_it/app/screens/main/main_view.dart';
+import 'package:todo_it/app/screens/main/widgets/card_date.dart';
+import 'package:todo_it/app/screens/main/widgets/card_icon.dart';
+import 'package:todo_it/app/screens/main/widgets/repeat.dart';
 
 import '../../../commons/common.dart';
 import '../../../data/local/enums/priority_enum.dart';
 import '../../../data/local/models/task_model.dart';
+import 'card_expand.dart';
 
 class ListTask extends StatefulWidget {
   final List<Task> tasks;
@@ -70,6 +75,7 @@ class _ListTaskState extends State<ListTask> {
                   leading: IconButton(
                     onPressed: () {
                       setState(() {
+                        print("Repeat Id ${widget.tasks[index].repeatId}");
                         mainController.toggleCompletedTask(widget.tasks[index]);
                         widget.tasks[index].isCompleted =
                             !widget.tasks[index].isCompleted!;
@@ -92,35 +98,22 @@ class _ListTaskState extends State<ListTask> {
                             style: const TextStyle(color: Color(0xff024059)),
                           ),
                           IconButton(
-                              onPressed: () =>
-                                  showAlertDialog(context, widget.tasks[index]),
-                              icon: Icon(Icons.crisis_alert,
-                                  color: widget.tasks[index].priority ==
-                                          Priority.basic
-                                      ? Colors.grey
-                                      : widget.tasks[index].priority ==
-                                              Priority.urgent
-                                          ? Colors.orange[300]
-                                          : widget.tasks[index].priority ==
-                                                  Priority.important
-                                              ? Colors.red[300]
-                                              : Colors.red)),
+                            onPressed: () =>
+                                showAlertDialog(context, widget.tasks[index]),
+                            icon: CardIcon(
+                              task: widget.tasks[index],
+                            ),
+                          )
                         ],
                       ),
                       GetBuilder<MainController>(
-                          init: MainController(),
-                          builder: (mainController) {
-                            return mainController.isDatepickerShow
-                                ? const SizedBox()
-                                : Align(
-                                    alignment: Alignment.bottomRight,
-                                    child: mainController.isDatepickerShow
-                                        ? const Text("")
-                                        : Text(
-                                            getDayMonth(widget.tasks[index]),
-                                            style: const TextStyle(fontSize: 15),
-                                          ));
-                          }),
+                        init: MainController(),
+                        builder: (mainController) {
+                          return mainController.isDatepickerShow
+                              ? CardRepeat(task: widget.tasks[index])
+                              : CardExpand(task: widget.tasks[index]);
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -132,28 +125,22 @@ class _ListTaskState extends State<ListTask> {
     );
   }
 }
-
 showAlertDialog(BuildContext context, Task task) {
   return showAdaptiveDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-            title: Row(
-              children: [
-                Text("${task.title}"),
-                const SizedBox(
-                  width: 10,
-                ),
-                Icon(Icons.crisis_alert,
-                    color: task.priority == Priority.basic
-                        ? Colors.grey
-                        : task.priority == Priority.urgent
-                            ? Colors.orange[300]
-                            : task.priority == Priority.important
-                                ? Colors.red[300]
-                                : Colors.red),
-              ],
-            ),
-            content: Text("${task.description}"),
-          ));
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Row(
+        children: [
+          Text("${task.title}"),
+          const SizedBox(
+            width: 10,
+          ),
+          CardIcon(
+            task: task,
+          ),
+        ],
+      ),
+      content: Text("${task.description}"),
+    ),
+  );
 }
-

@@ -12,13 +12,12 @@ class CalendarPicker extends StatefulWidget {
 
 class _CalendarPickerState extends State<CalendarPicker> {
   DateTime selectedDate = DateTime.now();
-  DateTime focusedDate = DateTime.now(); // Focused day değişkenini ekliyoruz
 
   @override
   Widget build(BuildContext context) {
     CreateTaskController createTaskController = Get.find<CreateTaskController>();
     return TableCalendar(
-      focusedDay: focusedDate, // Focused day burada kullanılıyor
+      focusedDay: selectedDate, // Focused day burada kullanılıyor
       firstDay: DateTime.now(),
       lastDay: DateTime(DateTime.now().year + 1),
       selectedDayPredicate: (day) {
@@ -27,7 +26,6 @@ class _CalendarPickerState extends State<CalendarPicker> {
       onDaySelected: (selectedDay, focusedDay) {
         setState(() {
           selectedDate = selectedDay;
-          focusedDate = focusedDay; // Focused day de güncelleniyor
         });
         createTaskController.selectDate(selectedDay);
       },

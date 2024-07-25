@@ -9,11 +9,9 @@ class CalendarDayBox extends StatefulWidget {
   const CalendarDayBox({
     super.key,
     required this.currentDay,
-    required this.now,
   });
 
   final int currentDay;
-  final DateTime now;
 
   @override
   State<CalendarDayBox> createState() => _CalendarDayBoxState();
@@ -25,14 +23,13 @@ class _CalendarDayBoxState extends State<CalendarDayBox> {
 
   @override
   void initState() {
-    super.initState();
     fetchTasks();
+    super.initState();
   }
 
   Future<void> fetchTasks() async {
-    currentTasks = await calendarController.taskRepository.getByDate(
-        0, DateTime(widget.now.year, widget.now.month, widget.currentDay));
-    setState(() {}); // Refresh the state to reflect the fetched tasks
+    print(widget.currentDay);
+    currentTasks = await calendarController.getTasks(widget.currentDay);
   }
 
   @override

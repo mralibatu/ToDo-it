@@ -17,7 +17,8 @@ class CreateTask extends StatefulWidget {
 class _CreateTaskState extends State<CreateTask> {
   @override
   Widget build(BuildContext context) {
-    CreateTaskController createTaskController = Get.find<CreateTaskController>();
+    CreateTaskController createTaskController =
+        Get.find<CreateTaskController>();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blueGrey[200],
@@ -50,15 +51,17 @@ class _CreateTaskState extends State<CreateTask> {
           String newId = uuid.v4();
 
           Task newTask = Task(
-              id: newId,
-              title: createTaskController.title,
-              description: createTaskController.desc,
-              startDate: createTaskController.startDate,
-              priority: createTaskController.priority,
-              isCompleted: false);
+            id: newId,
+            title: createTaskController.title,
+            description: createTaskController.desc,
+            startDate: createTaskController.startDate,
+            priority: createTaskController.priority,
+            isCompleted: false,
+            repeatFreq: -1,
+            repeatId: "",
+          );
 
           Get.back(result: newTask);
-
         },
         child: const Icon(Icons.save, color: Colors.white, size: 28),
       ),

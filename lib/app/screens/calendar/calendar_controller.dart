@@ -29,6 +29,7 @@ class CalendarController extends GetxController {
   }
 
   void monthIncrease() {
+    print("-------------------------------");
     changeCalendarMonth += 1;
     currentDate = DateTime(
         DateTime.now().year, DateTime.now().month + changeCalendarMonth);
@@ -36,6 +37,7 @@ class CalendarController extends GetxController {
   }
 
   void monthDecrease() {
+    print("**********************************");
     changeCalendarMonth -= 1;
     currentDate = DateTime(
       DateTime.now().year,
@@ -45,8 +47,17 @@ class CalendarController extends GetxController {
   }
 
   Future<int> getTaskCount(int currentDay) async {
-    DateTime filterDate = DateTime(currentDate.year, currentDate.month, currentDay);
+    DateTime filterDate =
+        DateTime(currentDate.year, currentDate.month, currentDay);
     return await taskRepository.getTaskCountByDate(filterDate, true);
+  }
+
+  Future<List<Task>> getTasks(int currentDay) async {
+    print("********" + currentDate.month.toString());
+    DateTime filterDate =
+        DateTime(currentDate.year, currentDate.month, currentDay);
+    print(filterDate);
+    return await taskRepository.getByDate(0, filterDate);
   }
 
   int getWeekDay() {

@@ -183,6 +183,8 @@ class TaskRepository {
         description: taskDescriptions[0],
         startDate: startDate,
         priority: p1,
-        isCompleted: isComp);
+        isCompleted: isComp,
+        repeatFreq: -1,
+    );
   }
 }

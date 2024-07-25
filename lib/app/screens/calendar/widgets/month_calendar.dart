@@ -13,7 +13,7 @@ Widget monthCalendar(int changeCalendarMonth) {
   List<Widget> days4 = [];
   List<Widget> days5 = [];
   DateTime now = DateTime.now();
-  DateTime firstDayOfCurrentMonth = DateTime(now.year, now.month, 1);
+  DateTime firstDayOfCurrentMonth = DateTime(now.year, calendarController.currentDate.month, 1);
   DateTime lastDayOfPreviousMonth =
       firstDayOfCurrentMonth.subtract(const Duration(days: 1));
   int daysInPreMonth = lastDayOfPreviousMonth.day;
@@ -36,7 +36,6 @@ Widget monthCalendar(int changeCalendarMonth) {
     days.add(
       CalendarDayBox(
         currentDay: i - calendarController.getWeekDay() + 1,
-        now: DateTime(now.year, now.month, i - 5),
       ),
     );
     if (i == 7) {
@@ -47,19 +46,19 @@ Widget monthCalendar(int changeCalendarMonth) {
   for (int i = 1; i <= 7; i++) {
     currentDay++;
     days2.add(
-      CalendarDayBox(currentDay: currentDay, now: now),
+      CalendarDayBox(currentDay: currentDay),
     );
   }
   for (int i = 0; i < 7; i++) {
     currentDay++;
     days3.add(
-      CalendarDayBox(currentDay: currentDay, now: now),
+      CalendarDayBox(currentDay: currentDay),
     );
   }
   for (int i = 0; i < 7; i++) {
     currentDay++;
     days4.add(
-      CalendarDayBox(currentDay: currentDay, now: now),
+      CalendarDayBox(currentDay: currentDay),
     );
   }
   for (int i = 0; i < 7; i++) {
@@ -68,7 +67,7 @@ Widget monthCalendar(int changeCalendarMonth) {
       break;
     }
     days5.add(
-      CalendarDayBox(currentDay: currentDay, now: now),
+      CalendarDayBox(currentDay: currentDay),
     );
   }
 
